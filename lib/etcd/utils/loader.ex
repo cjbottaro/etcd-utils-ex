@@ -37,7 +37,7 @@ defmodule Etcd.Utils.Loader do
     if node["key"] do
       %{ key_part(node) => obj }
     else
-      %{ "/" => obj }
+      obj
     end
   end
 
