@@ -30,7 +30,7 @@ defmodule Etcd.Utils.Mixfile do
   defp deps do
     [
       {:httpoison, "~> 0.11"},
-      {:poison, "~> 3.1"},
+      {:poison, ">= 2.0.0"},
     ]
   end
 end
