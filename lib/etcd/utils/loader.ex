@@ -23,8 +23,8 @@ defmodule Etcd.Utils.Loader do
     "http://#{options.host}:#{options.port}#{path}"
   end
 
-  defp parse_node(%{"dir" => true} = node) do
-    map = Enum.reduce node["nodes"], %{}, fn node, acc ->
+  defp parse_node(%{"dir" => true, "nodes" => children} = node) do
+    map = Enum.reduce children, %{}, fn node, acc ->
       Map.merge(acc, parse_node(node))
     end
 
@@ -39,6 +39,11 @@ defmodule Etcd.Utils.Loader do
     else
       obj
     end
+  end
+
+  # Case for empty dir; key "nodes" doesn't exist.
+  defp parse_node(%{"dir" => true} = node) do
+    %{ key_part(node) => [] } # Arbitrarily use empty array to denote empty dir.
   end
 
   defp parse_node(node) do
@@ -66,7 +71,7 @@ defmodule Etcd.Utils.Loader do
   end
 
   defp cast_value(node) do
-    value = node["value"] |> String.strip
+    value = node["value"] |> String.trim
     cond do
       value == "" -> nil
       Regex.match?(~r/^\d+$/, value) -> String.to_integer(value)
